@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chevron User App</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; 
+            background-color: #f0f2f5; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            min-height: 100vh; 
+            flex-direction: column; 
+        }
+        .hidden { 
+            display: none !important; 
+        }
+        .container { 
+            background-color: #ffffff; 
+            padding: 30px 35px; 
+            border-radius: 12px; 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
+            width: 100%; 
+            max-width: 400px; 
+            margin-bottom: 20px; 
+        }
+        h2 { 
+            text-align: center; 
+            color: #1c1e21; 
+            margin-bottom: 25px; 
+            font-weight: 600;
+        }
+        .input-group { 
+            margin-bottom: 20px; 
+        }
+        .input-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: #606770; 
+            font-weight: 500; 
+        }
+        .input-group input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #dddfe2; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px;
+        }
+        .btn { 
+            width: 100%; 
+            padding: 13px; 
+            border: none; 
+            border-radius: 8px; 
+            background-color: #007bff; 
+            color: #ffffff; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background-color 0.3s; 
+        }
+        .btn:hover { 
+            background-color: #0056b3; 
+        }
+        .link { 
+            text-align: center; 
+            margin-top: 20px; 
+        }
+        .link a { 
+            color: #007bff; 
+            text-decoration: none; 
+            font-weight: 500;
+        }
+        .link a:hover { 
+            text-decoration: underline; 
+        }
+        .package { 
+            border: 1px solid #ddd; 
+            border-radius: 10px; 
+            padding: 20px; 
+            text-align: center; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            margin-bottom: 15px; 
+        }
+        .package:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
+        }
+        .package h3 { 
+            margin-top: 0; 
+            color: #0056b3; 
+        }
+        .package .price { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #333; 
+        }
+        .package .daily-return { 
+            color: #28a745; 
+            font-weight: bold; 
+            margin: 10px 0; 
+        }
+        .package .btn-buy { 
+            background-color: #28a745; 
+        }
+        .package .btn-buy:hover { 
+            background-color: #218838; 
+        }
+        .dashboard-stats { 
+            display: flex; 
+            justify-content: space-around; 
+            text-align: center; 
+            margin-top: 20px; 
+            gap: 15px; 
+        }
+        .stat { 
+            padding: 15px; 
+            border-radius: 10px; 
+            background-color: #e9f5ff; 
+            width: 48%; 
+        }
+        .stat h4 { 
+            margin-top: 0; 
+            color: #0056b3; 
+            font-size: 14px; 
+            font-weight: 500;
+        }
+        .stat p { 
+            font-size: 20px; 
+            font-weight: bold; 
+            margin-bottom: 0; 
+            color: #333; 
+        }
+        .active-package-card { 
+            background-color: #f9f9f9; 
+            border: 1px solid #e1e1e1; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-top: 25px; 
+            text-align: center; 
+        }
+        #countdown-timer { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #dc3545; 
+            margin: 5px 0 15px 0; 
+        }
+        #receiveBtn { 
+            background-color: #28a745; 
+        }
+        #receiveBtn:disabled { 
+            background-color: #a0a0a0; 
+            cursor: not-allowed; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sign Up Page -->
+    <div id="signupPage" class="user-page container">
+        <h2>Create an Account</h2>
+        <form onsubmit="event.preventDefault(); handleSignUp();">
+            <div class="input-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="Enter your email" required>
+            </div>
+            <div class="input-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" placeholder="Min. 6 characters" required>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+        </form>
+        <div class="link"><p>Already have an account? <a href="#" onclick="showUserPage('loginPage')">Log In</a></p></div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="user-page container hidden">
+        <h2>Log In to Chevron</h2>
+        <form onsubmit="event.preventDefault(); handleLogin();">
+            <div class="input-group"><label for="login-email">Email</label><input id="login-email" type="email" placeholder="Enter your email" required></div>
+            <div class="input-group"><label for="login-password">Password</label><input id="login-password" type="password" placeholder="Enter your password" required></div>
+            <button type="submit" class="btn">Log In</button>
+        </form>
+        <div class="link"><p>Don't have an account? <a href="#" onclick="showUserPage('signupPage')">Sign Up</a></p></div>
+    </div>
+    
+    <!-- Packages Page -->
+    <div id="packagesPage" class="user-page container hidden">
+        <h2>Choose Your Package</h2>
+        <div class="package"><h3>Basic Plan</h3><p class="price">$200</p><p class="daily-return">Daily Return: $5</p><button class="btn btn-buy" onclick="showUserPage('dashboardPage');">Buy Now</button></div>
+        <div class="package"><h3>Premium Plan</h3><p class="price">$500</p><p class="daily-return">Daily Return: $13</p><button class="btn btn-buy" onclick="showUserPage('dashboardPage');">Buy Now</button></div>
+        <div class="link"><a href="#" onclick="showUserPage('dashboardPage')">Go to Dashboard</a></div>
+    </div>
+    
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="user-page container hidden">
+        <h2>My Dashboard</h2>
+        <p>Welcome, <span id="userEmail">User</span>!</p>
+        <div class="dashboard-stats">
+            <div class="stat"><h4>Total Balance</h4><p id="totalBalance">$0.00</p></div>
+            <div class="stat"><h4>Daily Income</h4><p>$5.00</p></div>
+        </div>
+        <div class="active-package-card">
+            <h3>My Active Package</h3>
+            <p><strong>Plan:</strong> Basic Plan</p>
+            <p id="countdown-timer">23:59:59</p>
+            <button id="receiveBtn" class="btn" disabled>Receive Profit</button>
+        </div>
+        <div class="link"><a href="#" onclick="handleLogout()">Log Out</a></div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVfH3eqx2vDrLfxAzNv8b0-_siZ6XxI5s",
+            authDomain: "chevron-bot.firebaseapp.com",
+            databaseURL: "https://chevron-bot-default-rtdb.firebaseio.com",
+            projectId: "chevron-bot",
+            storageBucket: "chevron-bot.appspot.com",
+            messagingSenderId: "131795679177",
+            appId: "1:131795679177:web:1b82a08be5589152a61a18"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        function showUserPage(pageId) {
+            document.querySelectorAll('.user-page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        function handleSignUp() {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(cred => {
+                    return database.ref('users/' + cred.user.uid).set({
+                        email: email, balance: 0, package: 'none', lastClaimed: 0
+                    });
+                })
+                .then(() => {
+                    alert("Account created! Please log in.");
+                    showUserPage('loginPage');
+                })
+                .catch(err => alert(err.message));
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(cred => {
+                    document.getElementById('userEmail').innerText = cred.user.email;
+                    showUserPage('dashboardPage');
+                })
+                .catch(err => alert(err.message));
+        }
+        
+        function handleLogout() {
+            auth.signOut().then(() => {
+                showUserPage('loginPage');
+            });
+        }
+        
+        startTimer(); // Demo timer start
+        function startTimer() {
+            let targetTime = new Date().getTime() + 15000;
+            setInterval(() => {
+                const distance = targetTime - new Date().getTime();
+                if (distance > 0) {
+                    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((distance % (1000 * 60)) / 1000);
+                    document.getElementById('countdown-timer').innerText = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                } else {
+                    document.getElementById('countdown-timer').innerText = "Ready!";
+                    document.getElementById('receiveBtn').disabled = false;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

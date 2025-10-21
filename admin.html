@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chevron - Admin Panel</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; 
+            background-color: #f4f7fa; 
+        }
+        .hidden { 
+            display: none !important; 
+        }
+        .admin-panel-wrapper { 
+            display: flex; 
+        }
+        .sidebar { 
+            width: 250px; 
+            background-color: #2c3e50; 
+            color: #ecf0f1; 
+            height: 100vh; 
+            position: fixed; 
+        }
+        .sidebar h2 { 
+            text-align: center; 
+            margin: 0; 
+            padding: 22px 0; 
+            background-color: #34495e; 
+            font-size: 20px;
+        }
+        .sidebar ul { 
+            list-style-type: none; 
+            padding: 0; 
+            margin: 0; 
+        }
+        .sidebar ul li { 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #34495e; 
+            transition: background-color 0.3s; 
+            font-weight: 500;
+        }
+        .sidebar ul li:hover, .sidebar ul li.active { 
+            background-color: #3498db; 
+        }
+        .main-content { 
+            margin-left: 250px; 
+            padding: 25px; 
+            width: calc(100% - 250px); 
+        }
+        .main-content h1 { 
+            color: #333; 
+            margin-top: 0; 
+            font-weight: 600;
+        }
+        .cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px; 
+            margin-top: 20px; 
+        }
+        .card { 
+            background-color: #fff; 
+            padding: 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            text-align: center; 
+        }
+        .card h3 { 
+            margin-top: 0; 
+            color: #3498db; 
+            font-size: 16px; 
+            text-transform: uppercase;
+        }
+        .card p { 
+            font-size: 28px; 
+            font-weight: bold; 
+            margin: 10px 0 0; 
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .data-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 30px; 
+            background-color: #fff; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .data-table th, .data-table td { 
+            padding: 15px; 
+            border-bottom: 1px solid #ddd; 
+            text-align: left; 
+        }
+        .data-table th { 
+            background-color: #ecf0f1; 
+            color: #333; 
+            font-weight: 600; 
+        }
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        .btn { 
+            padding: 6px 12px; 
+            border: none; 
+            border-radius: 5px; 
+            color: #fff; 
+            cursor: pointer; 
+            font-size: 14px; 
+            transition: opacity 0.3s;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn-approve { background-color: #27ae60; } 
+        .btn-reject { background-color: #c0392b; }
+        .form-container { 
+            background-color: #fff; 
+            padding: 25px; 
+            border-radius: 8px; 
+            margin-top: 20px;
+            max-width: 500px;
+        }
+        .form-group { 
+            margin-bottom: 15px; 
+        }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 500; 
+        }
+        .form-group input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+        }
+        .btn-submit { 
+            background-color: #3498db; 
+            color: white; 
+            padding: 10px 15px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-panel-wrapper">
+        <div class="sidebar">
+            <h2>Chevron Admin</h2>
+            <ul>
+                <li class="active" onclick="showAdminPage('dashboardAdmin', this)">Dashboard</li>
+                <li onclick="showAdminPage('usersAdmin', this)">User Management</li>
+                <li onclick="showAdminPage('packagesAdmin', this)">Package Management</li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <!-- Admin Dashboard -->
+            <div id="dashboardAdmin" class="admin-page">
+                <h1>Dashboard</h1>
+                <div class="cards">
+                    <div class="card"><h3>Total Users</h3><p id="total-users">0</p></div>
+                    <div class="card"><h3>Total Investments</h3><p>$0</p></div>
+                    <div class="card"><h3>Pending Withdrawals</h3><p>0</p></div>
+                </div>
+            </div>
+            <!-- User Management -->
+            <div id="usersAdmin" class="admin-page hidden">
+                <h1>User Management</h1>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>User Email</th><th>Balance</th><th>Package</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- User data will be loaded here by JavaScript -->
+                            <tr><td colspan="4" style="text-align:center;">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Package Management -->
+            <div id="packagesAdmin" class="admin-page hidden">
+                <h1>Package Management</h1>
+                <div class="form-container">
+                    <h3>Add New Package</h3>
+                    <form onsubmit="event.preventDefault();">
+                        <div class="form-group"><label>Package Name</label><input type="text"></div>
+                        <div class="form-group"><label>Price ($)</label><input type="number"></div>
+                        <button type="submit" class="btn btn-submit">Add Package</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVfH3eqx2vDrLfxAzNv8b0-_siZ6XxI5s",
+            authDomain: "chevron-bot.firebaseapp.com",
+            databaseURL: "https://chevron-bot-default-rtdb.firebaseio.com",
+            projectId: "chevron-bot",
+            storageBucket: "chevron-bot.appspot.com",
+            messagingSenderId: "131795679177",
+            appId: "1:131795679177:web:1b82a08be5589152a61a18"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function showAdminPage(pageId, element) {
+            document.querySelectorAll('.admin-page').forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+        }
+        
+        // Function to load users into the admin panel
+        function loadUsers() {
+            const usersRef = database.ref('users');
+            const usersTableBody = document.getElementById('users-table-body');
+            
+            usersRef.on('value', (snapshot) => {
+                const users = snapshot.val();
+                usersTableBody.innerHTML = ''; // Clear previous data
+                
+                if (users) {
+                    let userCount = 0;
+                    for (let uid in users) {
+                        const user = users[uid];
+                        const row = `
+                            <tr>
+                                <td>${user.email}</td>
+                                <td>$${user.balance.toFixed(2)}</td>
+                                <td>${user.package}</td>
+                                <td><button class="btn btn-reject">Ban</button></td>
+                            </tr>
+                        `;
+                        usersTableBody.innerHTML += row;
+                        userCount++;
+                    }
+                    document.getElementById('total-users').innerText = userCount;
+                } else {
+                    usersTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No users found.</td></tr>';
+                }
+            });
+        }
+        
+        // Load data when the page loads
+        window.onload = function() {
+            loadUsers();
+        };
+    </script>
+</body>
+</html>

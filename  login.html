@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Chevron App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: var(--tg-theme-bg-color, #ffffff);
+            --tg-theme-text-color: var(--tg-theme-text-color, #000000);
+            --tg-theme-button-color: var(--tg-theme-button-color, #3390ec);
+            --tg-theme-button-text-color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .auth-container {
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--tg-theme-button-color);
+            cursor: pointer;
+        }
+        #signup-form {
+            display: none;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 10px;
+            min-height: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Login Form -->
+        <div id="login-form">
+            <h1>Welcome Back!</h1>
+            <p class="error-message" id="login-error"></p>
+            <form onsubmit="handleLogin(); return false;">
+                <div class="form-group">
+                    <label for="login-mobile">Mobile Number</label>
+                    <input type="tel" id="login-mobile" placeholder="e.g., 01712345678" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">Don't have an account? Sign Up</p>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signup-form">
+            <h1>Create Account</h1>
+            <p class="error-message" id="signup-error"></p>
+            <form onsubmit="handleSignUp(); return false;">
+                <div class="form-group">
+                    <label for="signup-mobile">Mobile Number</label>
+                    <input type="tel" id="signup-mobile" placeholder="e.g., 01712345678" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <button type="submit" class="auth-btn">Sign Up</button>
+            </form>
+            <p class="toggle-link" onclick="toggleForms()">Already have an account? Login</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // --- PASTE YOUR FIREBASE CONFIGURATION HERE ---
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyDVfH3eqx2vDrLfxAzNv8b0-_siZ6XxI5s",
+
+  authDomain: "chevron-bot.firebaseapp.com",
+
+  databaseURL: "https://chevron-bot-default-rtdb.firebaseio.com",
+
+  projectId: "chevron-bot",
+
+  storageBucket: "chevron-bot.firebasestorage.app",
+
+  messagingSenderId: "131795679177",
+
+  appId: "1:131795679177:web:3a5d9a3f640f5a30a61a18"
+
+};
+        // --- END OF FIREBASE CONFIG ---
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        function toggleForms() {
+            document.getElementById('login-error').innerText = '';
+            document.getElementById('signup-error').innerText = '';
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            signupForm.style.display = signupForm.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function handleSignUp() {
+            const mobile = document.getElementById('signup-mobile').value;
+            const password = document.getElementById('signup-password').value;
+            const errorEl = document.getElementById('signup-error');
+            errorEl.innerText = '';
+            
+            if (mobile.length < 11 || password.length < 6) {
+                errorEl.innerText = 'Mobile must be 11 digits and password at least 6 characters.';
+                return;
+            }
+            const email = `${mobile}@chevron.app`;
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await db.collection('users').doc(userCredential.user.uid).set({
+                    mobile: mobile,
+                    balance: 0,
+                    isActive: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                window.location.href = 'index.html';
+            } catch (error) {
+                errorEl.innerText = error.message;
+            }
+        }
+
+        async function handleLogin() {
+            const mobile = document.getElementById('login-mobile').value;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            errorEl.innerText = '';
+            const email = `${mobile}@chevron.app`;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                window.location.href = 'index.html';
+            } catch (error) {
+                errorEl.innerText = 'Login failed. Please check your credentials.';
+            }
+        }
+    </script>
+</body>
+</html>

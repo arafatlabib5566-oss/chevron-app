@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আরাফাত কসমেটিক জোন | আসল কসমেটিকসের বিশ্বস্ত প্রতিষ্ঠান</title>
+    
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="আরাফাত কসমেটিক জোন">
+    <meta property="og:description" content="আমাদের এখানে পাবেন ১০০% অরিজিনাল কসমেটিকস। এখনই অর্ডার করতে ভিজিট করুন।">
+    <meta property="og:image" content="https://i.ibb.co/vz6m8px/cosmetic-banner.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root { --primary: #e63988; --secondary: #25D366; --bg: #fff5f8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Hind Siliguri', sans-serif; }
+        body { background-color: #fff; color: #333; }
+
+        header { background: white; padding: 15px 5%; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: 700; color: var(--primary); letter-spacing: 1px; }
+
+        .hero { background: linear-gradient(rgba(255,245,248,0.9), rgba(255,255,255,0.9)), url('https://www.transparenttextures.com/patterns/cubes.png'); padding: 50px 5%; text-align: center; }
+        .hero h1 { font-size: 32px; color: #222; margin-bottom: 10px; }
+        .hero p { font-size: 16px; color: #666; }
+
+        .section-title { text-align: center; margin: 40px 0 20px; font-size: 24px; position: relative; padding-bottom: 10px; }
+        .section-title::after { content: ''; width: 50px; height: 3px; background: var(--primary); position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); }
+
+        .product-container { padding: 0 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto 50px; }
+        
+        .product-card { background: white; border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .product-card img { width: 100%; height: 230px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; background: #fdfdfd; }
+        .product-card h3 { font-size: 18px; margin-bottom: 10px; color: #333; height: 50px; overflow: hidden; line-height: 1.4; }
+        .price { font-size: 22px; color: var(--primary); font-weight: 700; margin-bottom: 15px; }
+        
+        .buy-wa { background: var(--secondary); color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+        .buy-wa:hover { background: #1da851; }
+
+        #loading { text-align: center; padding: 50px; font-size: 18px; color: var(--primary); }
+
+        footer { text-align: center; padding: 30px; background: #222; color: white; margin-top: 50px; }
+        
+        .float-wa { position: fixed; bottom: 20px; right: 20px; background: var(--secondary); width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-decoration: none; z-index: 1000; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">আরাফাত কসমেটিক জোন</div>
+    </header>
+
+    <section class="hero">
+        <h1>আসল কসমেটিকসের বিশ্বস্ত ঠিকানা</h1>
+        <p>সরাসরি আমদানিকৃত প্রিমিয়াম কসমেটিকস এখন আপনার হাতের নাগালে।</p>
+    </section>
+
+    <div class="section-title">আমাদের বিশেষ পণ্যসমূহ</div>
+
+    <div id="loading">পণ্যগুলো লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
+    <div class="product-container" id="productGrid"></div>
+
+    <a href="https://wa.me/8801700000000" id="mainWA" class="float-wa" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <footer>
+        <p>&copy; ২০২৪ আরাফাত কসমেটিক জোন | ১০০% অরিজিনাল পণ্যের নিশ্চয়তা</p>
+    </footer>
+
+    <script>
+        // আপনার গুগল শিট পাবলিশ করা CSV লিঙ্কটি এখানে বসান
+        const sheetUrl = 'আপনার_CSV_লিঙ্ক_এখানে_পেস্ট_করুন';
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(sheetUrl);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1); // প্রথম সারি (Header) বাদ দিয়ে
+                
+                const grid = document.getElementById('productGrid');
+                const loading = document.getElementById('loading');
+                grid.innerHTML = '';
+                
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    if (columns.length >= 4) {
+                        const name = columns[0].trim();
+                        const price = columns[1].trim();
+                        const img = columns[2].trim();
+                        const wa = columns[3].trim();
+
+                        if(name && price) {
+                            grid.innerHTML += `
+                                <div class="product-card">
+                                    <img src="${img}" alt="${name}">
+                                    <h3>${name}</h3>
+                                    <p class="price">৳ ${price}</p>
+                                    <a href="https://wa.me/${wa}?text=আসসালামু আলাইকুম, আমি এই প্রোডাক্টটি নিতে চাই: %0Aপণ্য: ${name}%0Aমূল্য: ${price} টাকা" 
+                                       class="buy-wa" target="_blank">
+                                        <i class="fab fa-whatsapp"></i> অর্ডার করুন
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+                loading.style.display = 'none';
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('loading').innerText = 'পণ্য লোড করতে সমস্যা হচ্ছে। লিঙ্কটি চেক করুন।';
+            }
+        }
+
+        fetchProducts();
+    </script>
+</body>
+</html>
